@@ -51,3 +51,29 @@ body{background-color:var(--cream);background-image:radial-gradient(circle at 12
     margin-top: 14px;
   }
 }
+
+/* Hidden lobby controls must stay hidden even when component rules set display. */
+[hidden] {
+  display: none !important;
+}
+
+/* Errors use a dark surface and bright text for reliable contrast in the mission theme. */
+.field-error:not(:empty) {
+  padding: 10px 12px;
+  border: 1px solid #ff8f7a;
+  border-radius: 8px;
+  background: #351a24;
+  color: #ffd8d1 !important;
+  font-weight: 700;
+}
+
+.toast {
+  max-width: min(90vw, 520px);
+  border: 1px solid #ff8f7a;
+  border-radius: 10px;
+  background: #351a24;
+  color: #fff4f1;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .45);
+  font-weight: 700;
+  text-align: center;
+}

@@ -70,7 +70,7 @@
           <form id="nameForm">
             <label for="fullName">Vollständiger Name</label>
             <input id="fullName" name="fullName" autocomplete="name" placeholder="z. B. Lena Müller" required minlength="3" />
-            <p class="field-error" id="nameError"></p>
+            <p class="field-error" id="nameError" role="alert" aria-live="polite"></p>
             <button class="btn btn-primary full" type="submit">Weiter <span>→</span></button>
           </form>
           <small>Dein Name wird nur für diesen Spieleabend gespeichert.</small>
@@ -92,7 +92,7 @@
           <form id="joinForm" class="choice-panel" hidden>
             <label for="roomCode">4-stelliger Raumcode</label>
             <div class="code-input-wrap"><input id="roomCode" inputmode="numeric" maxlength="4" placeholder="0000" /><span>#</span></div>
-            <p class="field-error" id="codeError"></p>
+            <p class="field-error" id="codeError" role="alert" aria-live="polite"></p>
             <button class="btn btn-primary full" type="submit">Raum beitreten <span>→</span></button>
           </form>
         </div>
