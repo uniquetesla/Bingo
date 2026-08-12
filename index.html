@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="description" content="Bingo-Abend – Räume erstellen, Freunde einladen und gemeinsam Bingo spielen." />
+    <title>Bingo-Abend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Bingo-Abend Startseite">
+        <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+        <span>BINGO<em>ABEND</em></span>
+      </a>
+      <div class="header-actions">
+        <button class="how-link" id="howBtn">So geht’s <span>↗</span></button>
+        <div class="profile-pill" id="profilePill" hidden>
+          <span id="headerInitials">–</span><strong id="headerName"></strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="screen landing-screen active" id="landingScreen">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> Der Spieleabend beginnt hier</div>
+          <h1>Ein Abend.<br /><em>Ein Bingo.</em></h1>
+          <p class="hero-lead">Erstelle einen Raum, lade deine Lieblingsmenschen ein und finde heraus, wer heute das meiste Glück hat.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="createRoomBtn">Raum erstellen <span>→</span></button>
+            <button class="btn btn-secondary" id="joinRoomBtn">Raum beitreten</button>
+          </div>
+          <div class="trust-row">
+            <div class="avatars"><span>LM</span><span>TS</span><span>AK</span><span>+8</span></div>
+            <p><strong>Einfach. Gemeinsam. Kostenlos.</strong><br />Kein Download nötig.</p>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="sunburst"></div>
+          <div class="ticket ticket-back"><span>BINGO</span><b>SPIELKARTE</b></div>
+          <div class="ticket ticket-front">
+            <div class="ticket-head"><span>BINGO</span><b># 0815</b></div>
+            <div class="mini-grid" id="heroGrid"></div>
+            <div class="ticket-foot"><span>VIEL GLÜCK!</span><i>★</i></div>
+          </div>
+          <div class="ball ball-one">42</div>
+          <div class="ball ball-two">7</div>
+          <div class="ball ball-three">19</div>
+          <div class="spark spark-one">✦</div><div class="spark spark-two">✦</div>
+        </div>
+        <div class="scroll-hint"><span></span> RUNTERSCROLLEN</div>
+      </section>
+
+      <section class="screen form-screen" id="authScreen">
+        <button class="back-btn" data-back="landingScreen">← Zurück</button>
+        <div class="form-card">
+          <div class="form-icon">✦</div>
+          <p class="step-label">SCHRITT 1 VON 2</p>
+          <h2>Wie heißt du?</h2>
+          <p>Damit alle wissen, wer mitspielt.</p>
+          <form id="nameForm">
+            <label for="fullName">Vollständiger Name</label>
+            <input id="fullName" name="fullName" autocomplete="name" placeholder="z. B. Lena Müller" required minlength="3" />
+            <p class="field-error" id="nameError"></p>
+            <button class="btn btn-primary full" type="submit">Weiter <span>→</span></button>
+          </form>
+          <small>Dein Name wird nur für diesen Spieleabend gespeichert.</small>
+        </div>
+      </section>
+
+      <section class="screen form-screen" id="roomChoiceScreen">
+        <button class="back-btn" data-back="landingScreen">← Zurück</button>
+        <div class="form-card wide">
+          <p class="step-label">SCHRITT 2 VON 2</p>
+          <h2 id="choiceTitle">Dein Spieleabend</h2>
+          <p id="choiceSubtitle">Nur noch ein kleiner Schritt.</p>
+          <div id="createPanel" class="choice-panel">
+            <div class="color-badge">♣</div>
+            <h3>Bereit zum Einladen?</h3>
+            <p>Erstelle einen Raum und teile den Code mit deinen Mitspielern.</p>
+            <button class="btn btn-primary full" id="confirmCreateBtn">Raumcode erstellen <span>→</span></button>
+          </div>
+          <form id="joinForm" class="choice-panel" hidden>
+            <label for="roomCode">4-stelliger Raumcode</label>
+            <div class="code-input-wrap"><input id="roomCode" inputmode="numeric" maxlength="4" placeholder="0000" /><span>#</span></div>
+            <p class="field-error" id="codeError"></p>
+            <button class="btn btn-primary full" type="submit">Raum beitreten <span>→</span></button>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen room-screen" id="lobbyScreen">
+        <div class="room-topbar">
+          <div><span class="live-dot"></span> WARTERAUM</div>
+          <button class="text-btn" id="leaveLobbyBtn">Raum verlassen</button>
+        </div>
+        <div class="lobby-layout">
+          <div class="lobby-main">
+            <p class="eyebrow"><span></span> Gleich geht’s los</p>
+            <h2>Alle an Bord?</h2>
+            <p>Teile den Code mit deinen Freunden. Sobald alle da sind, startest du die Runde.</p>
+            <div class="room-code-card">
+              <div><small>DEIN RAUMCODE</small><strong id="lobbyCode">0000</strong></div>
+              <button id="copyCodeBtn" aria-label="Raumcode kopieren">Kopieren <span>⧉</span></button>
+            </div>
+            <div class="players-heading"><h3>Mitspieler <span id="playerCount">1</span></h3><span>MAX. 12</span></div>
+            <div class="players-list" id="playersList"></div>
+          </div>
+          <aside class="host-panel">
+            <div class="host-art"><div class="host-ball">B</div><span>✦</span></div>
+            <h3>Du bist Gastgeber</h3>
+            <p>Du bestimmst, wann die Runde beginnt und ziehst die Zahlen.</p>
+            <button class="btn btn-primary full" id="startGameBtn">Spiel starten <span>→</span></button>
+            <small>Mindestens 2 Spieler empfohlen</small>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen">
+        <div class="game-header">
+          <div><span class="live-dot"></span> RUNDE LÄUFT</div>
+          <div class="compact-code">RAUM <strong id="gameCode">0000</strong></div>
+          <button class="text-btn" id="leaveGameBtn">Spiel verlassen</button>
+        </div>
+        <div class="game-layout">
+          <section class="board-panel">
+            <div class="game-title"><div><p>DEINE KARTE</p><h2>Viel Glück, <span id="firstName"></span>!</h2></div><div class="drawn-count"><strong id="drawnCount">0</strong><span>Zahlen gezogen</span></div></div>
+            <div class="bingo-board" id="bingoBoard"></div>
+            <p class="board-help">Tippe auf eine gezogene Zahl, um sie zu markieren.</p>
+          </section>
+          <aside class="caller-panel">
+            <p class="step-label">ZULETZT GEZOGEN</p>
+            <div class="current-ball empty" id="currentBall">?</div>
+            <p id="callStatus">Ziehe die erste Zahl!</p>
+            <button class="btn btn-dark full" id="drawBtn">Zahl ziehen <span>✦</span></button>
+            <div class="recent-section"><h3>Letzte Zahlen</h3><div class="recent-balls" id="recentBalls"><span class="muted">Noch keine</span></div></div>
+            <button class="bingo-button" id="bingoBtn"><strong>BINGO!</strong><span>Ich habe eine Reihe</span></button>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="howDialog">
+      <button class="dialog-close" aria-label="Schließen">×</button>
+      <p class="step-label">SO FUNKTIONIERT’S</p><h2>In drei Schritten zum Bingo</h2>
+      <ol><li><b>1</b><span><strong>Raum erstellen</strong>Registriere dich mit deinem Namen.</span></li><li><b>2</b><span><strong>Freunde einladen</strong>Teile den vierstelligen Raumcode.</span></li><li><b>3</b><span><strong>Bingo spielen</strong>Markiere Zahlen und vervollständige eine Reihe.</span></li></ol>
+    </dialog>
+    <dialog id="winnerDialog" class="winner-dialog">
+      <div class="confetti">✦ &nbsp; ● &nbsp; ★ &nbsp; ● &nbsp; ✦</div><div class="winner-crown">♛</div>
+      <p class="step-label">WIR HABEN EINEN GEWINNER</p><h2>BINGO!</h2><p><strong id="winnerName"></strong> hat als Erstes eine vollständige Reihe.</p>
+      <button class="btn btn-primary full" id="newRoundBtn">Neue Runde spielen <span>↻</span></button>
+      <button class="text-btn" id="winnerLeaveBtn">Zur Startseite</button>
+    </dialog>
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

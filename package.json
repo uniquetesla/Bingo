@@ -1,0 +1,10 @@
+{
+  "name": "bingo-abend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "check": "node --check app.js",
+    "build": "rm -rf dist && mkdir dist && cp index.html styles.css app.js dist/"
+  }
+}
