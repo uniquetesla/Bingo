@@ -10,10 +10,10 @@ const root = dirname(fileURLToPath(import.meta.url));
 const db = openDatabase();
 const games = new GameService(db);
 const removed = games.cleanup();
-console.log(`[bingo] Datenbank bereit; ${removed} abgelaufene Räume bereinigt.`);
+console.log(`[jl-bingo] Datenbank bereit; ${removed} abgelaufene Räume bereinigt.`);
 const cleanupTimer = setInterval(() => {
-  try { const count = games.cleanup(); if (count) console.log(`[bingo] ${count} abgelaufene Räume gelöscht.`); }
-  catch (error) { console.error('[bingo] Bereinigung fehlgeschlagen:', error); }
+  try { const count = games.cleanup(); if (count) console.log(`[jl-bingo] ${count} abgelaufene Räume gelöscht.`); }
+  catch (error) { console.error('[jl-bingo] Bereinigung fehlgeschlagen:', error); }
 }, 15 * 60 * 1000);
 cleanupTimer.unref();
 
@@ -25,7 +25,7 @@ publicFiles.forEach(file => app.get(file === 'index.html' ? '/' : `/${file}`, (_
 app.get('/health', (_req,res) => res.json({ status: 'ok' }));
 
 const replyError = (ack, error) => {
-  if (!(error instanceof GameError)) console.error('[bingo] Unerwarteter Socket-Fehler:', error);
+  if (!(error instanceof GameError)) console.error('[jl-bingo] Unerwarteter Socket-Fehler:', error);
   ack?.({ ok: false, code: error.code || 'SERVER_ERROR', message: error instanceof GameError ? error.message : 'Ein Serverfehler ist aufgetreten. Bitte versuche es erneut.' });
 };
 const sendState = (socket, state) => { socket.join(state.code); socket.data = { code: state.code, playerId: socket.data.playerId }; return state; };
@@ -39,7 +39,7 @@ const broadcast = code => {
 };
 const drawTimer = setInterval(() => {
   try { games.dueRooms().forEach(({ code }) => { if (games.drawDue(code)) broadcast(code); }); }
-  catch (error) { console.error('[bingo] Automatische Ziehung fehlgeschlagen:', error); }
+  catch (error) { console.error('[jl-bingo] Automatische Ziehung fehlgeschlagen:', error); }
 }, 500);
 drawTimer.unref();
 const action = (socket, event, handler, { broadcastRoom = true } = {}) => socket.on(event, (payload = {}, ack) => {
@@ -76,6 +76,6 @@ io.on('connection', socket => {
 });
 
 const port = Number(process.env.PORT || 3000);
-server.listen(port, '0.0.0.0', () => console.log(`[bingo] Server läuft auf Port ${port}.`));
+server.listen(port, '0.0.0.0', () => console.log(`[jl-bingo] Server läuft auf Port ${port}.`));
 const shutdown = () => server.close(() => { db.close(); process.exit(0); });
 process.on('SIGTERM', shutdown); process.on('SIGINT', shutdown);
