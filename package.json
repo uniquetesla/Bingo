@@ -1,10 +1,19 @@
 {
   "name": "bingo-abend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "python3 -m http.server 4173",
-    "check": "node --check app.js",
-    "build": "rm -rf dist && mkdir dist && cp index.html styles.css app.js dist/"
-  }
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check app.js && node --check server.js && node --check server/database.js && node --check server/game-service.js",
+    "test": "node --test",
+    "build": "npm run check"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {}
 }
