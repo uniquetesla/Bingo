@@ -37,6 +37,11 @@ const broadcast = code => {
     }
   }
 };
+const drawTimer = setInterval(() => {
+  try { games.dueRooms().forEach(({ code }) => { if (games.drawDue(code)) broadcast(code); }); }
+  catch (error) { console.error('[bingo] Automatische Ziehung fehlgeschlagen:', error); }
+}, 500);
+drawTimer.unref();
 const action = (socket, event, handler, { broadcastRoom = true } = {}) => socket.on(event, (payload = {}, ack) => {
   try {
     const result = handler(payload);
@@ -50,8 +55,9 @@ io.on('connection', socket => {
   action(socket, 'room:create', payload => { socket.data.playerId = payload.playerId; return games.createRoom(payload); });
   action(socket, 'room:join', payload => { socket.data.playerId = payload.playerId; return games.joinRoom(payload); });
   action(socket, 'room:resume', payload => { socket.data.playerId = payload.playerId; return games.getState(payload.code, payload.playerId); });
+  action(socket, 'room:configure', payload => games.configure(socket.data.code, socket.data.playerId, payload.drawInterval));
+  action(socket, 'room:kick', payload => games.kick(socket.data.code, socket.data.playerId, payload.playerId));
   action(socket, 'game:start', () => games.start(socket.data.code, socket.data.playerId));
-  action(socket, 'game:draw', () => games.draw(socket.data.code, socket.data.playerId));
   action(socket, 'card:mark', payload => games.mark(socket.data.code, socket.data.playerId, payload.index, payload.marked));
   action(socket, 'game:bingo', () => games.bingo(socket.data.code, socket.data.playerId));
   action(socket, 'game:new-round', () => games.newRound(socket.data.code, socket.data.playerId));

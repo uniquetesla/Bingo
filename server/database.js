@@ -14,6 +14,8 @@ export function openDatabase(filename = process.env.DATABASE_PATH || '/app/data/
       status TEXT NOT NULL DEFAULT 'lobby' CHECK(status IN ('lobby', 'playing', 'finished')),
       drawn TEXT NOT NULL DEFAULT '[]',
       winner_id TEXT,
+      draw_interval INTEGER NOT NULL DEFAULT 10,
+      next_draw_at INTEGER,
       created_at INTEGER NOT NULL,
       expires_at INTEGER NOT NULL
     );
@@ -27,6 +29,15 @@ export function openDatabase(filename = process.env.DATABASE_PATH || '/app/data/
       PRIMARY KEY (id, room_code)
     );
     CREATE INDEX IF NOT EXISTS rooms_expiry_idx ON rooms(expires_at);
+    CREATE TABLE IF NOT EXISTS banned_players (
+      room_code TEXT NOT NULL REFERENCES rooms(code) ON DELETE CASCADE,
+      player_id TEXT NOT NULL,
+      banned_at INTEGER NOT NULL,
+      PRIMARY KEY (room_code, player_id)
+    );
   `);
+  const columns = db.prepare('PRAGMA table_info(rooms)').all().map(column => column.name);
+  if (!columns.includes('draw_interval')) db.exec('ALTER TABLE rooms ADD COLUMN draw_interval INTEGER NOT NULL DEFAULT 10');
+  if (!columns.includes('next_draw_at')) db.exec('ALTER TABLE rooms ADD COLUMN next_draw_at INTEGER');
   return db;
 }

@@ -118,7 +118,8 @@
           <aside class="host-panel">
             <div class="host-art"><div class="host-ball">🚀</div><span>✦</span></div>
             <h3>Du bist Gastgeber</h3>
-            <p>Du bestimmst, wann die Runde beginnt und ziehst die Zahlen.</p>
+            <p>Du startest die Mission – danach werden alle Zahlen automatisch gezogen.</p>
+            <label class="interval-setting" for="drawInterval"><span>Zahlen-Abstand</span><select id="drawInterval"><option value="3">3 Sekunden</option><option value="5">5 Sekunden</option><option value="10" selected>10 Sekunden</option><option value="15">15 Sekunden</option><option value="20">20 Sekunden</option><option value="30">30 Sekunden</option><option value="60">60 Sekunden</option></select></label>
             <button class="btn btn-primary full" id="startGameBtn">Spiel starten <span>→</span></button>
             <small>Mindestens 2 Spieler empfohlen</small>
           </aside>
@@ -140,8 +141,8 @@
           <aside class="caller-panel">
             <p class="step-label">ZULETZT GEZOGEN</p>
             <div class="current-ball empty" id="currentBall">?</div>
-            <p id="callStatus">Ziehe die erste Zahl!</p>
-            <button class="btn btn-dark full" id="drawBtn">Zahl ziehen <span>✦</span></button>
+            <p id="callStatus">Die erste Zahl ist gleich unterwegs …</p>
+            <div class="auto-draw"><span class="pulse-dot"></span><div><strong>Autopilot aktiv</strong><small id="countdown">Nächste Ziehung wird vorbereitet</small></div></div>
             <div class="recent-section"><h3>Letzte Zahlen</h3><div class="recent-balls" id="recentBalls"><span class="muted">Noch keine</span></div></div>
             <button class="bingo-button" id="bingoBtn"><strong>BINGO!</strong><span>Ich habe eine Reihe</span></button>
           </aside>
