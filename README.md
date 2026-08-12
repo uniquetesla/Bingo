@@ -1,4 +1,4 @@
-# Bingo-Abend
+# JL-Bingo
 
 Eine responsive, deutschsprachige Bingo-Mehrspieler-Anwendung. Das vorhandene Frontend wird von einem Node.js-/Express-Server ausgeliefert. Socket.IO synchronisiert Räume live zwischen Geräten; SQLite speichert Räume, Teilnehmer, individuelle Karten, Markierungen, gezogene Zahlen und Spielstatus dauerhaft.
 
