@@ -133,10 +133,6 @@
           <button class="text-btn" id="leaveGameBtn">Spiel verlassen</button>
         </div>
         <div class="game-layout">
-          <aside class="game-players" aria-labelledby="gamePlayersTitle">
-            <div class="game-players-heading"><h3 id="gamePlayersTitle">Mitspieler</h3><span id="gamePlayerCount">1</span></div>
-            <div class="game-players-list" id="gamePlayersList"></div>
-          </aside>
           <section class="board-panel">
             <div class="game-title"><div><p>DEINE KARTE</p><h2>Viel Glück, <span id="firstName"></span>!</h2></div><div class="drawn-count"><strong id="drawnCount">0</strong><span>Zahlen gezogen</span></div></div>
             <div class="bingo-board" id="bingoBoard"></div>
@@ -149,6 +145,10 @@
             <div class="auto-draw"><span class="pulse-dot"></span><div><strong>Autopilot aktiv</strong><small id="countdown">Nächste Ziehung wird vorbereitet</small></div></div>
             <div class="recent-section"><h3>Letzte Zahlen</h3><div class="recent-balls" id="recentBalls"><span class="muted">Noch keine</span></div></div>
             <button class="bingo-button" id="bingoBtn"><strong>BINGO!</strong><span>Ich habe eine Reihe</span></button>
+            <section class="game-players" aria-labelledby="gamePlayersTitle">
+              <div class="game-players-heading"><h3 id="gamePlayersTitle">Mitspieler</h3><span id="gamePlayerCount">1</span></div>
+              <div class="game-players-list" id="gamePlayersList"></div>
+            </section>
           </aside>
         </div>
       </section>
