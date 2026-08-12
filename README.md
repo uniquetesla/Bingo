@@ -8,4 +8,4 @@ Eine responsive, browserbasierte Bingo-Oberfläche auf Deutsch. Spieler registri
 npm start
 ```
 
-Die Anwendung ist ein Frontend-Prototyp. Mehrspieler werden im Warteraum simuliert; für echte geräteübergreifende Räume wäre zusätzlich ein Echtzeit-Backend erforderlich.
+Die Anwendung ist ein Frontend-Prototyp. Im Warteraum werden keine Bots oder Beispielspieler ergänzt: Angezeigt werden ausschließlich Personen, die dem Raum selbst beigetreten sind. Die lokale Raum-Synchronisierung funktioniert zwischen Tabs desselben Browsers; für echte geräteübergreifende Räume wäre zusätzlich ein Echtzeit-Backend erforderlich.
