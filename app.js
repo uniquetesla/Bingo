@@ -15,6 +15,8 @@ sessionStorage.setItem('bingo-player-id', state.playerId);
 const roomChannel = new BroadcastChannel('bingo-mission-rooms');
 const roomKey = (code) => `bingo-room-${code}`;
 const readRoom = (code = state.code) => JSON.parse(localStorage.getItem(roomKey(code)) || 'null');
+const createPlayer = () => ({ id: state.playerId, name: state.name, joinedByUser: true });
+const realPlayers = (room) => room.players.filter((player) => player.joinedByUser === true);
 const writeRoom = (room) => {
   localStorage.setItem(roomKey(room.code), JSON.stringify(room));
   roomChannel.postMessage({ code: room.code });
@@ -86,16 +88,17 @@ $('#joinForm').addEventListener('submit', (event) => {
 $('#confirmCreateBtn').addEventListener('click', () => {
   do { state.code = String(Math.floor(1000 + Math.random() * 9000)); } while (readRoom(state.code));
   state.isHost = true;
-  writeRoom({ code: state.code, hostId: state.playerId, players: [], status: 'lobby', drawn: [] });
+  writeRoom({ code: state.code, hostId: state.playerId, players: [createPlayer()], status: 'lobby', drawn: [] });
   enterLobby();
 });
 
 function enterLobby() {
   const room = readRoom();
   if (!room) return toast('Diese Raumstation ist nicht mehr verfügbar.');
+  room.players = realPlayers(room);
   const existing = room.players.find((player) => player.id === state.playerId);
   if (existing) existing.name = state.name;
-  else room.players.push({ id: state.playerId, name: state.name });
+  else room.players.push(createPlayer());
   writeRoom(room);
   $('#lobbyCode').textContent = state.code;
   renderPlayers(room);
