@@ -55,7 +55,7 @@ export class GameService {
     if (!existing) {
       const count = this.db.prepare('SELECT count(*) count FROM players WHERE room_code=?').get(code).count;
       if (count >= 12) fail('ROOM_FULL', 'Dieser Raum ist bereits voll.');
-      if (room.status !== 'lobby') fail('GAME_STARTED', 'Diese Runde läuft bereits. Ein neuer Beitritt ist nicht mehr möglich.');
+      if (room.status === 'finished') fail('ROUND_FINISHED', 'Diese Runde ist bereits beendet. Warte kurz auf die nächste Lobby.');
       this.db.prepare('INSERT INTO players(id,room_code,name,card,marked,joined_at) VALUES(?,?,?,?,?,?)').run(playerId, code, name, JSON.stringify(generateCard()), '[12]', this.now());
     } else if (existing.name !== name) {
       this.db.prepare('UPDATE players SET name=? WHERE id=? AND room_code=?').run(name, playerId, code);
@@ -133,10 +133,10 @@ export class GameService {
     return this.getState(code, playerId);
   }
   newRound(code, playerId) {
-    this.requireHost(code, playerId);
+    const state = this.getState(code, playerId);
+    if (state.status !== 'finished') fail('INVALID_ACTION', 'Die aktuelle Runde ist noch nicht beendet.');
     this.db.transaction(() => {
-      const room = this.requireHost(code, playerId);
-      this.db.prepare("UPDATE rooms SET status='playing',drawn='[]',winner_id=NULL,next_draw_at=? WHERE code=?").run(this.now() + room.draw_interval * 1000, code);
+      this.db.prepare("UPDATE rooms SET status='lobby',drawn='[]',winner_id=NULL,next_draw_at=NULL WHERE code=?").run(code);
       const players = this.db.prepare('SELECT id FROM players WHERE room_code=?').all(code);
       const update = this.db.prepare("UPDATE players SET card=?,marked='[12]' WHERE id=? AND room_code=?");
       players.forEach(p=>update.run(JSON.stringify(generateCard()), p.id, code));

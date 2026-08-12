@@ -8,13 +8,14 @@ body{background-color:var(--cream);background-image:radial-gradient(circle at 12
 
 /* Keep the complete ticket visible and make in-game guidance easy to read. */
 .game-layout {
-  min-height: calc(100dvh - 62px);
-  padding-block: 24px;
+  height: calc(100dvh - 154px);
+  min-height: 0;
+  padding-block: 16px;
   align-items: start;
 }
 
 .board-panel {
-  width: min(100%, calc(100dvh - 235px));
+  width: min(100%, calc(100dvh - 300px));
   min-width: 0;
   justify-self: center;
 }
@@ -34,13 +35,19 @@ body{background-color:var(--cream);background-image:radial-gradient(circle at 12
 
 @media (max-width: 900px) {
   .board-panel {
-    width: min(100%, calc(100dvh - 190px));
+    width: min(100%, calc(100dvh - 270px));
   }
 }
 
 @media (max-width: 560px) {
   .game-layout {
+    height: auto;
+    min-height: calc(100dvh - 137px);
     padding-block: 16px;
+  }
+
+  .board-panel {
+    width: min(100%, calc(100dvh - 245px));
   }
 
   .game-title h2 {
