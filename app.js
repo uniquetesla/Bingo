@@ -47,7 +47,7 @@ async function kickPlayer(targetId){if(!confirm('Crewmitglied wirklich entfernen
 $('#bingoBtn').addEventListener('click',async()=>{const room=await perform('game:bingo');if(room)applyRoom(room)});
 $('#newRoundBtn').addEventListener('click',async()=>{const room=await perform('game:new-round');if(room)applyRoom(room)});
 $('#copyCodeBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(state.code)}catch{}toast(`Raumcode ${state.code} kopiert`)});
-async function goHome(){if(state.code)await emit('room:leave');clearSession();$$('#winnerDialog:modal').forEach(d=>d.close());showScreen('landingScreen')}
+async function goHome(){if(state.code)await emit('room:leave');clearSession();const winnerDialog=$('#winnerDialog');if(winnerDialog.open)winnerDialog.close();showScreen('landingScreen')}
 $('#winnerLeaveBtn').addEventListener('click',goHome); $('#leaveLobbyBtn').addEventListener('click',goHome); $('#leaveGameBtn').addEventListener('click',goHome);
 $('#howBtn').addEventListener('click',()=>$('#howDialog').showModal()); $('.dialog-close').addEventListener('click',()=>$('#howDialog').close()); $('#howDialog').addEventListener('click',event=>{if(event.target===$('#howDialog'))$('#howDialog').close()});
 socket.on('room:state',applyRoom); socket.on('room:error',error=>{toast(error.message);clearSession();showScreen('landingScreen')}); socket.on('connect',async()=>{const saved=JSON.parse(localStorage.getItem('bingo-session')||'null');if(saved?.code&&saved.playerId===playerId){const room=await perform('room:resume',saved);if(room)applyRoom(room);else clearSession();}});
