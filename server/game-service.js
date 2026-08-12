@@ -68,7 +68,7 @@ export class GameService {
     const me = this.db.prepare('SELECT * FROM players WHERE id=? AND room_code=?').get(playerId, code);
     if (!me) fail('NOT_MEMBER', 'Du bist kein Mitglied dieses Raums.');
     const players = this.db.prepare('SELECT id,name FROM players WHERE room_code=? ORDER BY joined_at').all(code);
-    return { code, status: room.status, isHost: room.host_id === playerId, hostId: room.host_id, drawInterval: room.draw_interval, nextDrawAt: room.next_draw_at, drawn: JSON.parse(room.drawn), winnerId: room.winner_id, expiresAt: room.expires_at, players, card: JSON.parse(me.card), marked: JSON.parse(me.marked) };
+    return { code, status: room.status, returnedToLobby: Boolean(me.returned_to_lobby), isHost: room.host_id === playerId, hostId: room.host_id, drawInterval: room.draw_interval, nextDrawAt: room.next_draw_at, drawn: JSON.parse(room.drawn), winnerId: room.winner_id, expiresAt: room.expires_at, players, card: JSON.parse(me.card), marked: JSON.parse(me.marked) };
   }
   requireHost(code, playerId) {
     const room = this.db.prepare('SELECT * FROM rooms WHERE code=? AND expires_at>?').get(code, this.now());
@@ -136,9 +136,12 @@ export class GameService {
     const state = this.getState(code, playerId);
     if (state.status !== 'finished') fail('INVALID_ACTION', 'Die aktuelle Runde ist noch nicht beendet.');
     this.db.transaction(() => {
+      this.db.prepare('UPDATE players SET returned_to_lobby=1 WHERE id=? AND room_code=?').run(playerId, code);
+      const waiting = this.db.prepare('SELECT count(*) count FROM players WHERE room_code=? AND returned_to_lobby=0').get(code).count;
+      if (waiting) return;
       this.db.prepare("UPDATE rooms SET status='lobby',drawn='[]',winner_id=NULL,next_draw_at=NULL WHERE code=?").run(code);
       const players = this.db.prepare('SELECT id FROM players WHERE room_code=?').all(code);
-      const update = this.db.prepare("UPDATE players SET card=?,marked='[12]' WHERE id=? AND room_code=?");
+      const update = this.db.prepare("UPDATE players SET card=?,marked='[12]',returned_to_lobby=0 WHERE id=? AND room_code=?");
       players.forEach(p=>update.run(JSON.stringify(generateCard()), p.id, code));
     })();
     return this.getState(code, playerId);

@@ -39,5 +39,7 @@ export function openDatabase(filename = process.env.DATABASE_PATH || '/app/data/
   const columns = db.prepare('PRAGMA table_info(rooms)').all().map(column => column.name);
   if (!columns.includes('draw_interval')) db.exec('ALTER TABLE rooms ADD COLUMN draw_interval INTEGER NOT NULL DEFAULT 10');
   if (!columns.includes('next_draw_at')) db.exec('ALTER TABLE rooms ADD COLUMN next_draw_at INTEGER');
+  const playerColumns = db.prepare('PRAGMA table_info(players)').all().map(column => column.name);
+  if (!playerColumns.includes('returned_to_lobby')) db.exec('ALTER TABLE players ADD COLUMN returned_to_lobby INTEGER NOT NULL DEFAULT 0');
   return db;
 }
