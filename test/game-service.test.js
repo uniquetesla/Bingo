@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { openDatabase } from '../server/database.js';
+import { GameService } from '../server/game-service.js';
+const host='11111111-1111-4111-8111-111111111111', guest='22222222-2222-4222-8222-222222222222';
+function fixture() { const db=openDatabase(':memory:'); let now=1_700_000_000_000; const service=new GameService(db,{now:()=>now,codeGenerator:()=> '1234'}); return {db,service,setNow:value=>now=value}; }
+
+test('Raum erstellen speichert Gastgeber, Karte und Ablaufzeit',()=>{const {db,service}=fixture();const room=service.createRoom({name:'Anna Adler',playerId:host});assert.equal(room.code,'1234');assert.equal(room.isHost,true);assert.equal(room.card.length,25);assert.equal(room.expiresAt,1_700_000_000_000+86_400_000);db.close()});
+test('Raum beitreten und Sitzung wiederaufnehmen',()=>{const {db,service}=fixture();service.createRoom({name:'Anna Adler',playerId:host});const joined=service.joinRoom({code:'1234',name:'Bernd Bauer',playerId:guest});const resumed=service.getState('1234',guest);assert.equal(joined.players.length,2);assert.deepEqual(resumed.card,joined.card);assert.deepEqual(resumed.marked,[12]);db.close()});
+test('ungültige und doppelte Aktionen werden abgelehnt',()=>{const {db,service}=fixture();service.createRoom({name:'Anna Adler',playerId:host});service.joinRoom({code:'1234',name:'Bernd Bauer',playerId:guest});assert.throws(()=>service.start('1234',guest),{code:'HOST_ONLY'});service.start('1234',host);assert.throws(()=>service.start('1234',host),{code:'INVALID_ACTION'});assert.throws(()=>service.mark('1234',guest,0,true),{code:'NOT_DRAWN'});db.close()});
+test('Spielstatus und gezogene Zahlen werden gespeichert',()=>{const {db,service}=fixture();service.createRoom({name:'Anna Adler',playerId:host});service.start('1234',host);const state=service.draw('1234',host);assert.equal(state.status,'playing');assert.equal(state.drawn.length,1);assert.deepEqual(service.getState('1234',host).drawn,state.drawn);db.close()});
+test('Räume laufen exakt nach 24 Stunden ab und werden gelöscht',()=>{const {db,service,setNow}=fixture();service.createRoom({name:'Anna Adler',playerId:host});setNow(1_700_000_000_000+86_400_000-1);assert.equal(service.cleanup(),0);setNow(1_700_000_000_000+86_400_000);assert.equal(service.cleanup(),1);assert.throws(()=>service.getState('1234',host),{code:'ROOM_NOT_FOUND'});db.close()});
