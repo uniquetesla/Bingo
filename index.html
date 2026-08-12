@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="theme-color" content="#071326" />
     <meta name="description" content="Bingo-Abend – Räume erstellen, Freunde einladen und gemeinsam Bingo spielen." />
     <title>Bingo-Abend</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,7 +16,7 @@
     <header class="site-header">
       <a class="brand" href="#" aria-label="Bingo-Abend Startseite">
         <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
-        <span>BINGO<em>ABEND</em></span>
+        <span>BINGO<em>MISSION</em></span>
       </a>
       <div class="header-actions">
         <button class="how-link" id="howBtn">So geht’s <span>↗</span></button>
@@ -29,21 +29,22 @@
     <main>
       <section class="screen landing-screen active" id="landingScreen">
         <div class="hero-copy">
-          <div class="eyebrow"><span></span> Der Spieleabend beginnt hier</div>
-          <h1>Ein Abend.<br /><em>Ein Bingo.</em></h1>
-          <p class="hero-lead">Erstelle einen Raum, lade deine Lieblingsmenschen ein und finde heraus, wer heute das meiste Glück hat.</p>
+          <div class="eyebrow"><span></span> Deine Bingo-Mission startet hier</div>
+          <h1>Bereit zum<br /><em>Abheben?</em></h1>
+          <p class="hero-lead">Erstelle deine Raumstation, hole deine Crew an Bord und findet heraus, wer zuerst ein Bingo ins All funkt.</p>
           <div class="hero-actions">
             <button class="btn btn-primary" id="createRoomBtn">Raum erstellen <span>→</span></button>
             <button class="btn btn-secondary" id="joinRoomBtn">Raum beitreten</button>
           </div>
           <div class="trust-row">
             <div class="avatars"><span>LM</span><span>TS</span><span>AK</span><span>+8</span></div>
-            <p><strong>Einfach. Gemeinsam. Kostenlos.</strong><br />Kein Download nötig.</p>
+            <p><strong>Eine Mission. Eine Crew.</strong><br />Kein Download nötig.</p>
           </div>
         </div>
 
         <div class="hero-visual" aria-hidden="true">
-          <div class="sunburst"></div>
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="planet"></div>
           <div class="ticket ticket-back"><span>BINGO</span><b>SPIELKARTE</b></div>
           <div class="ticket ticket-front">
             <div class="ticket-head"><span>BINGO</span><b># 0815</b></div>
@@ -54,6 +55,7 @@
           <div class="ball ball-two">7</div>
           <div class="ball ball-three">19</div>
           <div class="spark spark-one">✦</div><div class="spark spark-two">✦</div>
+          <div class="astronaut"><span class="helmet"><i></i></span><span class="astro-body">B</span><span class="astro-pack"></span><span class="astro-arm"></span></div>
         </div>
         <div class="scroll-hint"><span></span> RUNTERSCROLLEN</div>
       </section>
@@ -61,7 +63,7 @@
       <section class="screen form-screen" id="authScreen">
         <button class="back-btn" data-back="landingScreen">← Zurück</button>
         <div class="form-card">
-          <div class="form-icon">✦</div>
+          <div class="form-icon">🚀</div>
           <p class="step-label">SCHRITT 1 VON 2</p>
           <h2>Wie heißt du?</h2>
           <p>Damit alle wissen, wer mitspielt.</p>
@@ -82,7 +84,7 @@
           <h2 id="choiceTitle">Dein Spieleabend</h2>
           <p id="choiceSubtitle">Nur noch ein kleiner Schritt.</p>
           <div id="createPanel" class="choice-panel">
-            <div class="color-badge">♣</div>
+            <div class="color-badge">🪐</div>
             <h3>Bereit zum Einladen?</h3>
             <p>Erstelle einen Raum und teile den Code mit deinen Mitspielern.</p>
             <button class="btn btn-primary full" id="confirmCreateBtn">Raumcode erstellen <span>→</span></button>
@@ -104,8 +106,8 @@
         <div class="lobby-layout">
           <div class="lobby-main">
             <p class="eyebrow"><span></span> Gleich geht’s los</p>
-            <h2>Alle an Bord?</h2>
-            <p>Teile den Code mit deinen Freunden. Sobald alle da sind, startest du die Runde.</p>
+            <h2>Crew an Bord?</h2>
+            <p>Nur Personen mit diesem Code landen in deiner Station. Sobald deine Crew vollständig ist, startest du die Mission.</p>
             <div class="room-code-card">
               <div><small>DEIN RAUMCODE</small><strong id="lobbyCode">0000</strong></div>
               <button id="copyCodeBtn" aria-label="Raumcode kopieren">Kopieren <span>⧉</span></button>
@@ -114,7 +116,7 @@
             <div class="players-list" id="playersList"></div>
           </div>
           <aside class="host-panel">
-            <div class="host-art"><div class="host-ball">B</div><span>✦</span></div>
+            <div class="host-art"><div class="host-ball">🚀</div><span>✦</span></div>
             <h3>Du bist Gastgeber</h3>
             <p>Du bestimmst, wann die Runde beginnt und ziehst die Zahlen.</p>
             <button class="btn btn-primary full" id="startGameBtn">Spiel starten <span>→</span></button>
