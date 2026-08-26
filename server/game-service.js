@@ -121,7 +121,8 @@ export class GameService {
     const state = this.getState(code, playerId);
     if (state.status !== 'playing') fail('INVALID_ACTION', 'Aktuell läuft keine Runde.');
     const player = this.db.prepare('SELECT last_marked_at FROM players WHERE id=? AND room_code=?').get(playerId, code);
-    if (player.last_marked_at + MARK_COOLDOWN_MS > this.now()) fail('MARK_COOLDOWN', 'Bitte warte 3 Sekunden, bevor du die nächste Kachel auswählst.');
+    const isLatestDraw = state.card[index] === state.drawn.at(-1);
+    if (player.last_marked_at + MARK_COOLDOWN_MS > this.now() && !isLatestDraw) fail('MARK_COOLDOWN', 'Bitte warte 3 Sekunden, bevor du die nächste Kachel auswählst.');
     if (!state.drawn.includes(state.card[index])) {
       const attemptedAt = this.now();
       this.db.prepare('UPDATE players SET last_marked_at=? WHERE id=? AND room_code=?').run(attemptedAt, playerId, code);
