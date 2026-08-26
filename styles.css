@@ -105,3 +105,14 @@ body{background-color:var(--cream);background-image:radial-gradient(circle at 12
   font-weight: 700;
   text-align: center;
 }
+
+.board-cell:disabled:not(.free) {
+  cursor: wait;
+  opacity: .58;
+}
+
+.kick-btn.confirming {
+  border-color: var(--coral);
+  background: var(--coral);
+  color: white;
+}
