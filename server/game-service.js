@@ -128,7 +128,9 @@ export class GameService {
       fail('NOT_DRAWN', 'Diese Zahl wurde noch nicht gezogen.', { nextMarkAt: attemptedAt + MARK_COOLDOWN_MS });
     }
     const values = new Set(state.marked); marked ? values.add(index) : values.delete(index);
-    this.db.prepare('UPDATE players SET marked=?,last_marked_at=? WHERE id=? AND room_code=?').run(JSON.stringify([...values].sort((a,b)=>a-b)), this.now(), playerId, code);
+    // Correct selections must remain immediately available. The timestamp tracks
+    // only a wrong attempt, which is the sole action that starts the cooldown.
+    this.db.prepare('UPDATE players SET marked=? WHERE id=? AND room_code=?').run(JSON.stringify([...values].sort((a,b)=>a-b)), playerId, code);
     return this.getState(code, playerId);
   }
   bingo(code, playerId) {
