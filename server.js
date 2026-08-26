@@ -26,7 +26,7 @@ app.get('/health', (_req,res) => res.json({ status: 'ok' }));
 
 const replyError = (ack, error) => {
   if (!(error instanceof GameError)) console.error('[jl-bingo] Unerwarteter Socket-Fehler:', error);
-  ack?.({ ok: false, code: error.code || 'SERVER_ERROR', message: error instanceof GameError ? error.message : 'Ein Serverfehler ist aufgetreten. Bitte versuche es erneut.' });
+  ack?.({ ok: false, code: error.code || 'SERVER_ERROR', message: error instanceof GameError ? error.message : 'Ein Serverfehler ist aufgetreten. Bitte versuche es erneut.', ...(error instanceof GameError && error.nextMarkAt ? { nextMarkAt: error.nextMarkAt } : {}) });
 };
 const sendState = (socket, state) => { socket.join(state.code); socket.data = { code: state.code, playerId: socket.data.playerId }; return state; };
 const broadcast = code => {

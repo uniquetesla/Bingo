@@ -1,9 +1,9 @@
 import { randomInt } from 'node:crypto';
 
 export class GameError extends Error {
-  constructor(code, message) { super(message); this.code = code; }
+  constructor(code, message, details = {}) { super(message); this.code = code; Object.assign(this, details); }
 }
-const fail = (code, message) => { throw new GameError(code, message); };
+const fail = (code, message, details) => { throw new GameError(code, message, details); };
 const cleanName = (value) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 const validId = (id) => typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id);
 const validInterval = value => Number.isInteger(Number(value)) && Number(value) >= 3 && Number(value) <= 60;
@@ -120,9 +120,13 @@ export class GameService {
     if (!Number.isInteger(index) || index < 0 || index > 24 || index === 12 || typeof marked !== 'boolean') fail('INVALID_MARK', 'Diese Markierung ist ungültig.');
     const state = this.getState(code, playerId);
     if (state.status !== 'playing') fail('INVALID_ACTION', 'Aktuell läuft keine Runde.');
-    if (!state.drawn.includes(state.card[index])) fail('NOT_DRAWN', 'Diese Zahl wurde noch nicht gezogen.');
     const player = this.db.prepare('SELECT last_marked_at FROM players WHERE id=? AND room_code=?').get(playerId, code);
     if (player.last_marked_at + MARK_COOLDOWN_MS > this.now()) fail('MARK_COOLDOWN', 'Bitte warte 3 Sekunden, bevor du die nächste Kachel auswählst.');
+    if (!state.drawn.includes(state.card[index])) {
+      const attemptedAt = this.now();
+      this.db.prepare('UPDATE players SET last_marked_at=? WHERE id=? AND room_code=?').run(attemptedAt, playerId, code);
+      fail('NOT_DRAWN', 'Diese Zahl wurde noch nicht gezogen.', { nextMarkAt: attemptedAt + MARK_COOLDOWN_MS });
+    }
     const values = new Set(state.marked); marked ? values.add(index) : values.delete(index);
     this.db.prepare('UPDATE players SET marked=?,last_marked_at=? WHERE id=? AND room_code=?').run(JSON.stringify([...values].sort((a,b)=>a-b)), this.now(), playerId, code);
     return this.getState(code, playerId);
