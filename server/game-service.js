@@ -7,6 +7,7 @@ const fail = (code, message) => { throw new GameError(code, message); };
 const cleanName = (value) => typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 const validId = (id) => typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id);
 const validInterval = value => Number.isInteger(Number(value)) && Number(value) >= 3 && Number(value) <= 60;
+const MARK_COOLDOWN_MS = 3_000;
 
 export function generateCard() {
   const card = [];
@@ -68,7 +69,7 @@ export class GameService {
     const me = this.db.prepare('SELECT * FROM players WHERE id=? AND room_code=?').get(playerId, code);
     if (!me) fail('NOT_MEMBER', 'Du bist kein Mitglied dieses Raums.');
     const players = this.db.prepare('SELECT id,name FROM players WHERE room_code=? ORDER BY joined_at').all(code);
-    return { code, status: room.status, returnedToLobby: Boolean(me.returned_to_lobby), isHost: room.host_id === playerId, hostId: room.host_id, drawInterval: room.draw_interval, nextDrawAt: room.next_draw_at, drawn: JSON.parse(room.drawn), winnerId: room.winner_id, expiresAt: room.expires_at, players, card: JSON.parse(me.card), marked: JSON.parse(me.marked) };
+    return { code, status: room.status, returnedToLobby: Boolean(me.returned_to_lobby), isHost: room.host_id === playerId, hostId: room.host_id, drawInterval: room.draw_interval, nextDrawAt: room.next_draw_at, nextMarkAt: me.last_marked_at + MARK_COOLDOWN_MS, drawn: JSON.parse(room.drawn), winnerId: room.winner_id, expiresAt: room.expires_at, players, card: JSON.parse(me.card), marked: JSON.parse(me.marked) };
   }
   requireHost(code, playerId) {
     const room = this.db.prepare('SELECT * FROM rooms WHERE code=? AND expires_at>?').get(code, this.now());
@@ -120,8 +121,10 @@ export class GameService {
     const state = this.getState(code, playerId);
     if (state.status !== 'playing') fail('INVALID_ACTION', 'Aktuell läuft keine Runde.');
     if (!state.drawn.includes(state.card[index])) fail('NOT_DRAWN', 'Diese Zahl wurde noch nicht gezogen.');
+    const player = this.db.prepare('SELECT last_marked_at FROM players WHERE id=? AND room_code=?').get(playerId, code);
+    if (player.last_marked_at + MARK_COOLDOWN_MS > this.now()) fail('MARK_COOLDOWN', 'Bitte warte 3 Sekunden, bevor du die nächste Kachel auswählst.');
     const values = new Set(state.marked); marked ? values.add(index) : values.delete(index);
-    this.db.prepare('UPDATE players SET marked=? WHERE id=? AND room_code=?').run(JSON.stringify([...values].sort((a,b)=>a-b)), playerId, code);
+    this.db.prepare('UPDATE players SET marked=?,last_marked_at=? WHERE id=? AND room_code=?').run(JSON.stringify([...values].sort((a,b)=>a-b)), this.now(), playerId, code);
     return this.getState(code, playerId);
   }
   bingo(code, playerId) {
@@ -141,7 +144,7 @@ export class GameService {
       if (waiting) return;
       this.db.prepare("UPDATE rooms SET status='lobby',drawn='[]',winner_id=NULL,next_draw_at=NULL WHERE code=?").run(code);
       const players = this.db.prepare('SELECT id FROM players WHERE room_code=?').all(code);
-      const update = this.db.prepare("UPDATE players SET card=?,marked='[12]',returned_to_lobby=0 WHERE id=? AND room_code=?");
+      const update = this.db.prepare("UPDATE players SET card=?,marked='[12]',returned_to_lobby=0,last_marked_at=0 WHERE id=? AND room_code=?");
       players.forEach(p=>update.run(JSON.stringify(generateCard()), p.id, code));
     })();
     return this.getState(code, playerId);
