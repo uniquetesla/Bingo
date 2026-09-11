@@ -10,7 +10,7 @@ $('#heroGrid').innerHTML = heroNumbers.map((n,i)=>`<span class="${[1,8,13,21].in
 function showScreen(id) { const changed=!$(`#${id}`).classList.contains('active'); $$('.screen').forEach(screen=>screen.classList.toggle('active',screen.id===id)); if(changed)window.scrollTo(0,0); }
 function initials(name) { return name.split(/\s+/).map(part=>part[0]).join('').slice(0,2).toUpperCase(); }
 function escapeHtml(value) { const node=document.createElement('span'); node.textContent=value; return node.innerHTML; }
-function updateProfile() { if (!state.name) return; $('#profilePill').hidden=false; $('#headerInitials').textContent=initials(state.name); $('#headerName').textContent=state.name.split(' ')[0]; }
+function updateProfile() { const loggedIn=Boolean(state.name); $('#profilePill').hidden=!loggedIn; $('#logoutBtn').hidden=!loggedIn; if (!loggedIn) return; $('#headerInitials').textContent=initials(state.name); $('#headerName').textContent=state.name.split(' ')[0]; }
 function emit(event, payload={}) { return new Promise(resolve=>socket.emit(event,payload,response=>resolve(response || {ok:false,message:'Der Server antwortet nicht.'}))); }
 function saveSession() { localStorage.setItem('bingo-name',state.name); localStorage.setItem('bingo-session',JSON.stringify({code:state.code,playerId})); }
 function clearSession() { localStorage.removeItem('bingo-session'); state.code=''; state.room=null; }
@@ -50,7 +50,9 @@ $('#bingoBtn').addEventListener('click',async()=>{const room=await perform('game
 $('#newRoundBtn').addEventListener('click',async()=>{const room=await perform('game:new-round');if(room)applyRoom(room)});
 $('#copyCodeBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(state.code)}catch{}toast(`Raumcode ${state.code} kopiert`)});
 async function goHome(){if(state.code)await emit('room:leave');clearSession();const winnerDialog=$('#winnerDialog');if(winnerDialog.open)winnerDialog.close();showScreen('landingScreen')}
+async function logout(){await goHome();state.name='';localStorage.removeItem('bingo-name');$('#fullName').value='';$('#nameError').textContent='';updateProfile();}
 $('#winnerLeaveBtn').addEventListener('click',goHome); $('#leaveLobbyBtn').addEventListener('click',goHome); $('#leaveGameBtn').addEventListener('click',goHome);
+$('#logoutBtn').addEventListener('click',logout);
 $('#howBtn').addEventListener('click',()=>$('#howDialog').showModal()); $('.dialog-close').addEventListener('click',()=>$('#howDialog').close()); $('#howDialog').addEventListener('click',event=>{if(event.target===$('#howDialog'))$('#howDialog').close()});
 socket.on('room:state',applyRoom); socket.on('room:error',error=>{toast(error.message);clearSession();showScreen('landingScreen')}); socket.on('connect',async()=>{const saved=JSON.parse(localStorage.getItem('bingo-session')||'null');if(saved?.code&&saved.playerId===playerId){const room=await perform('room:resume',saved);if(room)applyRoom(room);else clearSession();}});
 updateProfile();
