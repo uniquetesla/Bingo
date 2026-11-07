@@ -23,6 +23,7 @@
         <div class="profile-pill" id="profilePill" hidden>
           <span id="headerInitials">–</span><strong id="headerName"></strong>
         </div>
+        <button class="logout-btn" id="logoutBtn" type="button" hidden>Logout</button>
       </div>
     </header>
 
@@ -41,6 +42,7 @@
             <p><strong>Eine Mission. Eine Crew.</strong></p>
           </div>
           <p class="hosted-by">Hosted by <strong>JL-Studios</strong></p>
+          <button class="feedback-btn" id="feedbackBtn" type="button">Feedback geben</button>
         </div>
 
         <div class="hero-visual" aria-hidden="true">
@@ -164,6 +166,14 @@
       <button class="dialog-close" aria-label="Schließen">×</button>
       <p class="step-label">SO FUNKTIONIERT’S</p><h2>In drei Schritten zum Bingo</h2>
       <ol><li><b>1</b><span><strong>Raum erstellen</strong>Registriere dich mit deinem Namen.</span></li><li><b>2</b><span><strong>Freunde einladen</strong>Teile den vierstelligen Raumcode.</span></li><li><b>3</b><span><strong>Bingo spielen</strong>Markiere Zahlen und vervollständige eine Reihe.</span></li></ol>
+    </dialog>
+    <dialog id="feedbackDialog" class="feedback-dialog">
+      <button class="dialog-close" aria-label="Feedback-Fenster schließen">×</button>
+      <div class="feedback-icon" aria-hidden="true">✉</div>
+      <p class="step-label">DEINE MEINUNG ZÄHLT</p>
+      <h2>Feedback geben</h2>
+      <p>Du kannst dein Feedback anonym per E-Mail an uns übermitteln:</p>
+      <a class="feedback-email" href="mailto:feedback@jl-bingo.win">feedback@jl-bingo.win</a>
     </dialog>
     <dialog id="winnerDialog" class="winner-dialog">
       <div class="confetti">✦ &nbsp; ● &nbsp; ★ &nbsp; ● &nbsp; ✦</div><div class="winner-crown">♛</div>
